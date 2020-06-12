@@ -1,0 +1,7 @@
+---
+# deconfigure tasks file for android_studio
+- name: Remove sysctl config for inotify max_user_watches
+  become: yes
+  file:
+    path: "{{ inotify_sysctl_file }}"
+    state: absent

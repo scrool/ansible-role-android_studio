@@ -1,0 +1,23 @@
+---
+# desktop entry tasks file for android_studio
+- name: Create a temporary directory for a desktop file
+  tempfile:
+    state: directory
+  register: android_studio_desktop_tmp_directory
+  notify: Remove temporary Android Studio desktop directory
+
+- name: Create a desktop entry file
+  template:
+    src: android-studio.desktop.j2
+    dest: "{{ tmp_desktop_file_full }}"
+    mode: 0644
+
+- name: Install package desktop-file-utils that provides desktop-file-edit
+  package:
+    name: desktop-file-utils
+    state: present
+  notify: Remove desktop-file-utils
+
+- name: Add X-Desktop-File-Install-Version to the desktop entry
+  # Always adds an entry that is present in installed file so we can compare checksums
+  command: desktop-file-edit "{{ tmp_desktop_file_full }}"  # noqa 301

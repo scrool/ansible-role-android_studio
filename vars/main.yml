@@ -1,0 +1,11 @@
+---
+# vars file for android_studio
+top_src_name: android-studio
+top_dest_name: "{{ android_studio_top_dest_name }}"
+
+tmp_desktop_file_full: "{{ android_studio_desktop_tmp_directory.path }}/{{ top_dest_name }}.desktop"
+desktop_file_full: "{{ android_studio_desktop_parent_dir }}/{{ top_dest_name }}.desktop"
+
+install_dest_full: "{{ android_studio_install_parent_dir }}/{{ top_dest_name }}"
+
+inotify_sysctl_file: /etc/sysctl.d/inotify_max_user_watches.conf

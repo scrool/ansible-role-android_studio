@@ -1,0 +1,32 @@
+---
+# defaults file for android_studio
+# Path to an release archive of Android Studio on a control host or URL to
+# download the archive from.
+android_studio_archive_src: ""
+
+# By default installs the program. Set to "absent" to uninstall.
+android_studio_state: present
+
+# Base name of installation directory and name part of a desktop file.
+android_studio_top_dest_name: android-studio
+
+# Name entry of desktop file
+android_studio_desktop_name: Android Studio
+
+# Parent directory in which program will be installed. See also
+# `android_studio_top_dest_name`.
+android_studio_install_parent_dir: /opt
+
+# Parent directory in which desktop file will be installed. See also
+# `android_studio_top_dest_name`.
+android_studio_desktop_parent_dir: /usr/local/share/applications
+
+# If set to "yes", contents of installation directory and desktop file are not
+# compared against contents of `android_studio_archive_src` when uninstall,
+# upgrade or downgrade.
+android_studio_force_remove: no
+
+# Sets `fs.inotify.max_user_watches`. See
+# https://confluence.jetbrains.com/display/IDEADEV/Inotify+Watches+Limit for
+# more details.
+android_studio_inotify_max_user_watches: "524288"

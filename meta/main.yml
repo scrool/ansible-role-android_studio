@@ -1,0 +1,21 @@
+galaxy_info:
+  author: Pavol Babinčák
+  role_name: android_studio
+  description: >
+    Installs or uninstalls Android Studio - the official Integrated Development
+    Environment (IDE) for Android app development, based on IntelliJ IDEA.
+  company: none
+  license: MIT
+  min_ansible_version: 2.9
+
+  platforms:
+    - name: Fedora
+      versions:
+        - 31
+
+  galaxy_tags:
+    - desktop
+    - ide
+    - android
+
+dependencies: []

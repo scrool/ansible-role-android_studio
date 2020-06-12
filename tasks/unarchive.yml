@@ -1,0 +1,68 @@
+---
+# unarchive tasks file for android_studio
+- name: Create a temporary directory for unarchive
+  tempfile:
+    state: directory
+  register: android_studio_temp_dir
+  notify: Remove a temporary Android Studio directory for unarchive
+  when: not ansible_check_mode
+
+- name: Fail if archive src is not set
+  fail:
+    msg: To unarchive android_studio_archive_src must be set
+  when: android_studio_archive_src | length == 0
+
+- name: Unarchive the source archive
+  unarchive:
+    src: "{{ android_studio_archive_src }}"
+    dest: "{{ android_studio_temp_dir.path }}"
+    list_files: yes
+    remote_src: "{{ '://' in android_studio_archive_src }}"
+  register: android_studio_unarchived_content
+  when: not ansible_check_mode
+
+- name: Stat of installed product info
+  stat:
+    path: "{{ install_dest_full }}/product-info.json"
+  register: installed_product_info_stat
+
+- name: Compare of installed version with unarchived
+  block:
+    - name: Get installed product info contents
+      slurp:
+        src: "{{ install_dest_full }}/product-info.json"
+      register: product_info_contents
+
+    - name: Store installed product info
+      set_fact:
+        installed_product_info: "{{ product_info_contents['content'] | b64decode | from_json }}"
+
+    - name: Get unarchived product info contents
+      slurp:
+        src: "{{ android_studio_temp_dir.path }}/{{ top_src_name }}/product-info.json"
+      register: product_info_contents
+
+    - name: Store unarchived product info
+      set_fact:
+        unarchived_product_info: "{{ product_info_contents['content'] | b64decode | from_json }}"
+
+    - name: Fail if build versions differ
+      fail:
+        msg: Unarchived build number differs from installed build number. Use force to install or remove.
+      when: unarchived_product_info.buildNumber != installed_product_info.buildNumber
+  when:
+    - not ansible_check_mode
+    - not (android_studio_force_remove | bool)
+    - installed_product_info_stat.stat.exists
+
+- name: List unarchived parent dirs
+  set_fact:
+    unarchived_parents: "{{ android_studio_unarchived_content.files | map('reverse') | map('basename') | map('reverse') | list | unique }}"
+  when: not ansible_check_mode
+
+- name: Fail if there is not exactly one parent
+  fail:
+    msg: Archive does not contain exactly one top level directory
+  when:
+    - not ansible_check_mode
+    - unarchived_parents | length != 1

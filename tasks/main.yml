@@ -1,0 +1,35 @@
+---
+# main tasks file for android_studio
+- name: Fail if desired state is invalid
+  fail:
+    msg: State variable must be either "present" or "absent"
+  when: android_studio_state not in ["present", "absent"]
+
+- name: Fail if dest name is not set
+  fail:
+    msg: android_studio_top_dest_name must be defined
+  when: android_studio_top_dest_name | length == 0
+
+- name: Uninstall tasks of Android Studio
+  include_tasks: uninstall.yml
+  when:
+    - android_studio_state == "absent"
+    - android_studio_force_remove | bool
+
+- name: Install tasks of Android Studio
+  include_tasks: install.yml
+  when: android_studio_state == "present"
+
+- name: Configure tasks of Android Studio
+  include_tasks: configure.yml
+  when: android_studio_state == "present"
+
+- name: Safe uninstall tasks of Android Studio
+  include_tasks: safe_uninstall.yml
+  when:
+    - android_studio_state == "absent"
+    - not (android_studio_force_remove | bool)
+
+- name: Deconfigure tasks of Android Studio
+  include_tasks: deconfigure.yml
+  when: android_studio_state == "absent"

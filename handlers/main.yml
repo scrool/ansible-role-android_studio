@@ -1,0 +1,25 @@
+---
+# handlers file for android_studio
+- name: Remove a temporary Android Studio directory for unarchive
+  become: yes
+  file:
+    name: "{{ android_studio_temp_dir.path }}"
+    state: absent
+
+- name: Remove temporary Android Studio desktop directory
+  become: yes
+  file:
+    name: "{{ android_studio_desktop_tmp_directory.path }}"
+    state: absent
+
+- name: Remove rsync
+  become: yes
+  package:
+    name: rsync
+    state: absent
+
+- name: Remove desktop-file-utils
+  become: yes
+  package:
+    name: desktop-file-utils
+    state: absent
